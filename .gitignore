@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# source asset drop (canonical badge assets live in public/badges/)
+/BADGES/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

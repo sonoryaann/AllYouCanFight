@@ -1,0 +1,24 @@
+{
+  "name": "Sushi Battle",
+  "short_name": "Sushi Battle",
+  "description": "Conta i pezzi, sfida gli amici, vinci la cena all-you-can-eat.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf7f0",
+  "theme_color": "#fbf7f0",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sushi Battle
 
-## Getting Started
+A realtime mobile web app for tracking sushi orders and competing with friends. Count your pieces as you eat, watch the live leaderboard update, and get a shareable award badge on the results screen (e.g. "Re del Salmone", "Divoratore di Sashimi", "Senza Fondo"...). Built for the classic all-you-can-eat sushi night.
 
-First, run the development server:
+## Tech stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Next.js](https://nextjs.org) (App Router, TypeScript, src-dir) — React 19
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [Supabase](https://supabase.com) — Postgres + Realtime + Auth (anonymous sign-in)
+- [Vercel](https://vercel.com) for hosting/deploy
+- [Vitest](https://vitest.dev) + Testing Library for tests
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Install dependencies:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   npm install
+   ```
 
-## Learn More
+2. Copy the env example and fill in your Supabase credentials:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   cp .env.local.example .env.local
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   Then edit `.env.local` and set:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=
+   ```
 
-## Deploy on Vercel
+   `.env.local` is gitignored — never commit it.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Supabase notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Project name: `sushi-counter`
+- Project ref: `hqxwujapcvthpurbymhl`
+- **Required manual step**: this app signs players in anonymously, so you must **enable "Allow anonymous sign-ins"** in the Supabase dashboard under **Authentication → Sign In / Providers** for the project. Without this, sign-in will fail.
+
+## Running
+
+- Dev server: `npm run dev` — open [http://localhost:3000](http://localhost:3000)
+- Tests: `npm test` (or `npm run test:watch` for watch mode)
+- Production build: `npm run build`
+- Start built app: `npm run start`
+- Lint: `npm run lint`
+
+## Deploying to Vercel
+
+1. Import this repository into [Vercel](https://vercel.com/new).
+2. In the project's Environment Variables settings, set:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. Deploy. Vercel will run `npm run build` automatically on every push.
+4. Confirm anonymous sign-in is enabled on the Supabase project (see above) before sharing the deployed URL — this is easy to miss and will otherwise block everyone from signing in.
+
+## Assets
+
+- Award badge images live in `public/badges/`. These are the canonical, in-app assets (referenced by the results screen).
+- The original source asset drop is kept locally under `BADGES/` (gitignored) and is not part of the deployed app — `public/badges/` is what ships.
+- `public/badges/partecipante.png` is currently a **placeholder** and should be replaced with a final badge image before launch.
+
+## PWA
+
+The app ships a web manifest (`public/manifest.webmanifest`) with `display: "standalone"` and app icons under `public/icons/`, so it can be added to the home screen on mobile.

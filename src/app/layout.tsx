@@ -16,6 +16,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Sushi Counter & Battle",
   description: "Conta i pezzi, sfida gli amici, vinci la cena all-you-can-eat.",
+  manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {
