@@ -1,26 +1,88 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Rice-paper / nori / salmon / wasabi / soy token set */
+  --color-rice: #fbf7f0;
+  --color-rice-dim: #f2ead9;
+  --color-nori: #1a1a1a;
+  --color-nori-soft: #4a4038;
+  --color-salmon: #ff6b5a;
+  --color-salmon-dark: #e6503f;
+  --color-salmon-soft: #ffe3dc;
+  --color-wasabi: #7cb342;
+  --color-wasabi-dark: #63922f;
+  --color-wasabi-soft: #e6f2d9;
+  --color-soy: #a9825c;
+  --color-soy-soft: #efe3d3;
+  --color-card: #ffffff;
+
+  --background: var(--color-rice);
+  --foreground: var(--color-nori);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-rice: var(--color-rice);
+  --color-rice-dim: var(--color-rice-dim);
+  --color-nori: var(--color-nori);
+  --color-nori-soft: var(--color-nori-soft);
+  --color-salmon: var(--color-salmon);
+  --color-salmon-dark: var(--color-salmon-dark);
+  --color-salmon-soft: var(--color-salmon-soft);
+  --color-wasabi: var(--color-wasabi);
+  --color-wasabi-dark: var(--color-wasabi-dark);
+  --color-wasabi-soft: var(--color-wasabi-soft);
+  --color-soy: var(--color-soy);
+  --color-soy-soft: var(--color-soy-soft);
+  --color-card: var(--color-card);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-rice: #17140f;
+    --color-rice-dim: #201b14;
+    --color-nori: #f4efe6;
+    --color-nori-soft: #cfc7ba;
+    --color-card: #241f18;
+    --color-soy-soft: #33291d;
+    --color-salmon-soft: #3a2019;
+    --color-wasabi-soft: #23301a;
+    --background: var(--color-rice);
+    --foreground: var(--color-nori);
   }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display), sans-serif;
+}
+
+/* Tactile press feedback for buttons/steppers used across screens */
+.tap-active {
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+}
+
+.tap-active:active {
+  transform: scale(0.96);
 }
