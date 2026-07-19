@@ -1,6 +1,6 @@
 {
-  "name": "Sushi Battle",
-  "short_name": "Sushi Battle",
+  "name": "All You Can Fight",
+  "short_name": "AYCF",
   "description": "Conta i pezzi, sfida gli amici, vinci la cena all-you-can-eat.",
   "start_url": "/",
   "display": "standalone",
@@ -9,16 +9,16 @@
   "lang": "it",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }

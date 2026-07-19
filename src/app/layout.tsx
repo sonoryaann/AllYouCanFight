@@ -14,9 +14,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Sushi Counter & Battle",
+  title: "All You Can Fight",
   description: "Conta i pezzi, sfida gli amici, vinci la cena all-you-can-eat.",
   manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "AYCF",
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport: Viewport = {
