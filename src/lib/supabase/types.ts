@@ -173,6 +173,10 @@ export type Database = {
       }
     }
     Functions: {
+      add_order: {
+        Args: { p_dish: string; p_player: string }
+        Returns: undefined
+      }
       create_lobby: {
         Args: { p_codice: string; p_username: string }
         Returns: {
@@ -189,6 +193,7 @@ export type Database = {
         }
       }
       current_player_id: { Args: { p_lobby: string }; Returns: string }
+      mark_eaten: { Args: { p_order: string }; Returns: undefined }
       seed_default_dishes: { Args: { p_lobby: string }; Returns: undefined }
     }
     Enums: {
