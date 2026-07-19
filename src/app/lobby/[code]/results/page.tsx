@@ -11,6 +11,8 @@ import { computeAwards, AWARDS, type AwardId, type PlayerAward } from "@/lib/log
 import { computeLeaderboard } from "@/lib/logic/scoring";
 import type { LeaderboardEntry } from "@/lib/logic/scoring";
 import { AwardCard } from "@/components/AwardCard";
+import { BadgeShareActions } from "@/components/BadgeShareActions";
+import { badgeAsset } from "@/lib/logic/badges";
 
 export default function ResultsPage() {
   const params = useParams<{ code: string }>();
@@ -134,7 +136,19 @@ export default function ResultsPage() {
             </h2>
             <div className="flex flex-col gap-4">
               {me.awards.map((awardId) => (
-                <AwardCard key={awardId} awardId={awardId} username={me.username} variant="featured" />
+                <AwardCard
+                  key={awardId}
+                  awardId={awardId}
+                  username={me.username}
+                  variant="featured"
+                  actions={
+                    <BadgeShareActions
+                      badgeUrl={badgeAsset(awardId)}
+                      username={me.username}
+                      titolo={AWARDS[awardId].titolo}
+                    />
+                  }
+                />
               ))}
             </div>
           </section>
