@@ -60,7 +60,7 @@ export function AddCustomDishDialog({
             type="button"
             onClick={onClose}
             aria-label="Chiudi"
-            className="tap-active flex h-9 w-9 items-center justify-center rounded-full bg-rice-dim text-lg text-nori-soft"
+            className="tap-active flex h-11 w-11 items-center justify-center rounded-full bg-rice-dim text-lg text-nori-soft"
           >
             ✕
           </button>

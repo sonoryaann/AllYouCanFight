@@ -22,6 +22,10 @@ export function AddCustomDishForm({
       setError("Inserisci il nome del piatto.");
       return;
     }
+    if (!Number.isFinite(punti) || punti < 1) {
+      setError("I punti devono essere almeno 1.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -51,9 +55,9 @@ export function AddCustomDishForm({
         />
         <input
           type="number"
-          min={0}
+          min={1}
           value={punti}
-          onChange={(e) => setPunti(Math.max(0, Number(e.target.value)))}
+          onChange={(e) => setPunti(Number(e.target.value))}
           disabled={loading}
           className="h-12 w-16 rounded-xl border-2 border-soy-soft bg-rice-dim px-2 text-center text-base text-nori outline-none focus:border-salmon transition-colors"
         />

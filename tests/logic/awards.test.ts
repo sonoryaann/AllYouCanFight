@@ -12,7 +12,7 @@ describe("computeAwards", () => {
   it("assigns category winners and partecipante fallback", () => {
     const orders = [
       { player_id: "p1", dish_id: "d1", quantita_mangiata: 10 }, // salmone king, senza_fondo
-      { player_id: "p2", dish_id: "d2", quantita_mangiata: 3 },  // sashimi, palato_fino, campione (9 pts vs 10 pts)
+      { player_id: "p2", dish_id: "d2", quantita_mangiata: 3 },  // sashimi, palato_fino (9 pts; p1 is campione with 10 pts)
     ];
     const res = computeAwards(players, dishes, orders);
     const ann = res.find((r) => r.player_id === "p1")!;

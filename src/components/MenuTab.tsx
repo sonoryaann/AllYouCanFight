@@ -18,6 +18,7 @@ export function MenuTab({
 }) {
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [showAddDish, setShowAddDish] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const grouped = new Map<string, DishRow[]>();
   for (const d of dishes) {
@@ -28,11 +29,13 @@ export function MenuTab({
 
   async function handleAdd(dishId: string) {
     setPendingId(dishId);
+    setError(null);
     try {
       await addOrder(playerId, dishId);
       onOrdered?.();
     } catch (err) {
       console.error(err);
+      setError("Impossibile ordinare il piatto. Riprova.");
     } finally {
       setPendingId(null);
     }
@@ -47,6 +50,12 @@ export function MenuTab({
       >
         ➕ Aggiungi piatto fuori menu
       </button>
+
+      {error && (
+        <p role="alert" className="rounded-xl bg-salmon-soft px-4 py-3 text-sm font-medium text-salmon-dark">
+          {error}
+        </p>
+      )}
 
       {dishes.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16 text-center">

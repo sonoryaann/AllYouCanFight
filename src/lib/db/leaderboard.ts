@@ -7,7 +7,8 @@ export async function getLeaderboard(lobbyId: string): Promise<LeaderboardEntry[
     .from("leaderboard")
     .select("player_id, username, punti, pezzi")
     .eq("lobby_id", lobbyId)
-    .order("punti", { ascending: false });
+    .order("punti", { ascending: false })
+    .order("username", { ascending: true });
   if (error) throw error;
   return data as LeaderboardEntry[];
 }
