@@ -10,6 +10,7 @@ import { getLobbyOrders } from "@/lib/db/orders";
 import { computeAwards, AWARDS, type AwardId, type PlayerAward } from "@/lib/logic/awards";
 import { computeLeaderboard } from "@/lib/logic/scoring";
 import type { LeaderboardEntry } from "@/lib/logic/scoring";
+import { computeGrade, type EatenDish } from "@/lib/logic/missions";
 import { AwardCard } from "@/components/AwardCard";
 import { BadgeShareActions } from "@/components/BadgeShareActions";
 import { badgeAsset } from "@/lib/logic/badges";
@@ -24,6 +25,7 @@ export default function ResultsPage() {
   const [myPlayerId, setMyPlayerId] = useState<string | null>(null);
   const [playerAwards, setPlayerAwards] = useState<PlayerAward[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [myGrade, setMyGrade] = useState<ReturnType<typeof computeGrade> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -51,6 +53,20 @@ export default function ResultsPage() {
 
         const awards = computeAwards(players, dishes, orders);
         const board = computeLeaderboard(players, dishes, orders);
+
+        if (me) {
+          const myEaten: EatenDish[] = orders
+            .filter((o) => o.player_id === me.id)
+            .map((o) => ({
+              nome: o.nome,
+              categoria: o.categoria,
+              punti: o.punti,
+              quantita_ordinata: o.quantita_ordinata,
+              quantita_mangiata: o.quantita_mangiata,
+              stato: o.stato,
+            }));
+          setMyGrade(computeGrade(myEaten));
+        }
 
         setMyPlayerId(me?.id ?? null);
         setPlayerAwards(awards);
@@ -94,6 +110,7 @@ export default function ResultsPage() {
   }
 
   const me = playerAwards.find((pa) => pa.player_id === myPlayerId) ?? null;
+  const gradoLabel = myGrade ? `${myGrade.grade.emoji} ${myGrade.grade.nome}` : undefined;
 
   // Which usernames hold each award — for the "Classifiche" awards section.
   const winnersByAward: Record<AwardId, string[]> = {
@@ -134,18 +151,28 @@ export default function ResultsPage() {
             <h2 className="text-center font-display text-lg font-semibold text-nori">
               {me.awards.length > 1 ? "I tuoi premi" : "Il tuo premio"}
             </h2>
+            {myGrade && (
+              <div className="flex flex-col items-center gap-1 rounded-2xl bg-card px-4 py-3 text-center shadow-md shadow-nori/5 ring-1 ring-soy-soft/40">
+                <span className="font-display text-2xl font-bold text-nori">
+                  {myGrade.grade.emoji} {myGrade.grade.nome}
+                </span>
+                <span className="text-sm text-nori-soft">Punteggio {myGrade.score}</span>
+              </div>
+            )}
             <div className="flex flex-col gap-4">
               {me.awards.map((awardId) => (
                 <AwardCard
                   key={awardId}
                   awardId={awardId}
                   username={me.username}
+                  grado={gradoLabel}
                   variant="featured"
                   actions={
                     <BadgeShareActions
                       badgeUrl={badgeAsset(awardId)}
                       username={me.username}
                       titolo={AWARDS[awardId].titolo}
+                      grado={gradoLabel}
                     />
                   }
                 />

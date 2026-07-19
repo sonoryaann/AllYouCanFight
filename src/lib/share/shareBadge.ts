@@ -11,6 +11,8 @@ export interface BadgeShareOptions {
   badgeUrl: string;
   username: string;
   titolo: string;
+  /** Optional sushi grade line (emoji + nome), e.g. "🥇 Sushi d'Oro". */
+  grado?: string;
 }
 
 const CANVAS_WIDTH = 1080;
@@ -22,7 +24,7 @@ const CANVAS_HEIGHT = 1350;
  * `shareBadge` and `downloadBadge` so the composition logic lives in one
  * place.
  */
-async function composeBadgeImage({ badgeUrl, username, titolo }: BadgeShareOptions): Promise<Blob> {
+async function composeBadgeImage({ badgeUrl, username, titolo, grado }: BadgeShareOptions): Promise<Blob> {
   const canvas = document.createElement("canvas");
   canvas.width = CANVAS_WIDTH;
   canvas.height = CANVAS_HEIGHT;
@@ -70,10 +72,19 @@ async function composeBadgeImage({ badgeUrl, username, titolo }: BadgeShareOptio
   ctx.font = "700 64px 'Segoe UI', system-ui, sans-serif";
   wrapText(ctx, titolo, CANVAS_WIDTH / 2, badgeY + badgeSize + 130, CANVAS_WIDTH - 160, 74);
 
+  // Sushi grade line, between the award title and the username.
+  let usernameY = badgeY + badgeSize + 220;
+  if (grado) {
+    ctx.fillStyle = "#b8860b";
+    ctx.font = "700 42px 'Segoe UI', system-ui, sans-serif";
+    ctx.fillText(grado, CANVAS_WIDTH / 2, badgeY + badgeSize + 195);
+    usernameY += 55;
+  }
+
   // Username.
   ctx.fillStyle = "#2b2320";
   ctx.font = "600 48px 'Segoe UI', system-ui, sans-serif";
-  ctx.fillText(username, CANVAS_WIDTH / 2, badgeY + badgeSize + 220);
+  ctx.fillText(username, CANVAS_WIDTH / 2, usernameY);
 
   // Footer branding + URL.
   ctx.fillStyle = "#6b5b52";
@@ -147,8 +158,8 @@ export async function downloadBadge(opts: BadgeShareOptions): Promise<void> {
  * available; otherwise falls back to a plain download + clipboard copy of
  * the site URL so the "advertise the site" effect is preserved either way.
  */
-export async function shareBadge({ badgeUrl, username, titolo }: BadgeShareOptions): Promise<void> {
-  const blob = await composeBadgeImage({ badgeUrl, username, titolo });
+export async function shareBadge({ badgeUrl, username, titolo, grado }: BadgeShareOptions): Promise<void> {
+  const blob = await composeBadgeImage({ badgeUrl, username, titolo, grado });
   const file = new File([blob], "sushi-badge.png", { type: "image/png" });
   const url = window.location.origin;
   const promoText = `Ho vinto "${titolo}" a Sushi Battle! 🍣 Sfidami: ${url}`;
@@ -171,7 +182,7 @@ export async function shareBadge({ badgeUrl, username, titolo }: BadgeShareOptio
     }
   }
 
-  await downloadBadge({ badgeUrl, username, titolo });
+  await downloadBadge({ badgeUrl, username, titolo, grado });
   if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
     try {
       await navigator.clipboard.writeText(url);

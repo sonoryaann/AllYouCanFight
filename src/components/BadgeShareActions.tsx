@@ -7,6 +7,8 @@ export interface BadgeShareActionsProps {
   badgeUrl: string;
   username: string;
   titolo: string;
+  /** Sushi grade line (emoji + nome) to draw on the shared/downloaded image. */
+  grado?: string;
 }
 
 /**
@@ -14,14 +16,14 @@ export interface BadgeShareActionsProps {
  * AwardCard's `actions` slot — this is the growth loop: shared badge images
  * carry the site URL out into the world.
  */
-export function BadgeShareActions({ badgeUrl, username, titolo }: BadgeShareActionsProps) {
+export function BadgeShareActions({ badgeUrl, username, titolo, grado }: BadgeShareActionsProps) {
   const [pending, setPending] = useState<"share" | "download" | null>(null);
 
   async function handleShare() {
     if (pending) return;
     setPending("share");
     try {
-      await shareBadge({ badgeUrl, username, titolo });
+      await shareBadge({ badgeUrl, username, titolo, grado });
     } catch (err) {
       console.error(err);
     } finally {
@@ -33,7 +35,7 @@ export function BadgeShareActions({ badgeUrl, username, titolo }: BadgeShareActi
     if (pending) return;
     setPending("download");
     try {
-      await downloadBadge({ badgeUrl, username, titolo });
+      await downloadBadge({ badgeUrl, username, titolo, grado });
     } catch (err) {
       console.error(err);
     } finally {

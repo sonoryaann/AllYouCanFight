@@ -8,6 +8,8 @@ import { badgeAsset } from "@/lib/logic/badges";
 export interface AwardCardProps {
   awardId: AwardId;
   username?: string;
+  /** Sushi grade line (emoji + nome), e.g. "🥇 Sushi d'Oro". Featured variant only. */
+  grado?: string;
   /** "featured" = large, screenshot-worthy hero card. "compact" = small list row. */
   variant?: "featured" | "compact";
   /**
@@ -17,7 +19,7 @@ export interface AwardCardProps {
   actions?: React.ReactNode;
 }
 
-export function AwardCard({ awardId, username, variant = "featured", actions }: AwardCardProps) {
+export function AwardCard({ awardId, username, grado, variant = "featured", actions }: AwardCardProps) {
   const award = AWARDS[awardId];
 
   if (variant === "compact") {
@@ -43,6 +45,9 @@ export function AwardCard({ awardId, username, variant = "featured", actions }: 
         <h3 className="font-display text-2xl font-bold text-nori">{award.titolo}</h3>
         {username && (
           <p className="font-display text-lg font-semibold text-salmon-dark">{username}</p>
+        )}
+        {grado && (
+          <p className="font-display text-sm font-bold text-soy">{grado}</p>
         )}
         <p className="text-sm text-nori-soft">{award.descrizione}</p>
       </div>
