@@ -165,7 +165,6 @@ export default function ResultsPage() {
                   key={awardId}
                   awardId={awardId}
                   username={me.username}
-                  grado={gradoLabel}
                   variant="featured"
                   actions={
                     <BadgeShareActions
