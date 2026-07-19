@@ -44,21 +44,22 @@ async function composeBadgeImage({ badgeUrl, username, titolo, grado }: BadgeSha
   const badgeX = (CANVAS_WIDTH - badgeSize) / 2;
   const badgeY = 260;
 
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(CANVAS_WIDTH / 2, badgeY + badgeSize / 2, badgeSize / 2 + 24, 0, Math.PI * 2);
-  ctx.fillStyle = "#ffffff";
-  ctx.shadowColor = "rgba(0,0,0,0.15)";
-  ctx.shadowBlur = 40;
-  ctx.fill();
-  ctx.restore();
+  // Draw the badge preserving its aspect ratio ("contain") within the
+  // badgeSize box, centered — no stretching and no cropping, so non-square
+  // artwork keeps its shape.
+  const iw = badgeImg.naturalWidth || badgeImg.width || badgeSize;
+  const ih = badgeImg.naturalHeight || badgeImg.height || badgeSize;
+  const scale = Math.min(badgeSize / iw, badgeSize / ih);
+  const drawW = iw * scale;
+  const drawH = ih * scale;
+  const drawX = badgeX + (badgeSize - drawW) / 2;
+  const drawY = badgeY + (badgeSize - drawH) / 2;
 
   ctx.save();
-  ctx.beginPath();
-  ctx.arc(CANVAS_WIDTH / 2, badgeY + badgeSize / 2, badgeSize / 2, 0, Math.PI * 2);
-  ctx.closePath();
-  ctx.clip();
-  ctx.drawImage(badgeImg, badgeX, badgeY, badgeSize, badgeSize);
+  ctx.shadowColor = "rgba(0,0,0,0.18)";
+  ctx.shadowBlur = 36;
+  ctx.shadowOffsetY = 10;
+  ctx.drawImage(badgeImg, drawX, drawY, drawW, drawH);
   ctx.restore();
 
   // Site branding, top of the card.
