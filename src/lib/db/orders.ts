@@ -25,6 +25,24 @@ export async function markEaten(orderId: string): Promise<void> {
   if (error) throw error;
 }
 
+// Reads every order for the lobby (across all players), joining through
+// players to satisfy the `orders_read` RLS policy (a lobby member may read
+// all orders belonging to players in their own lobby).
+export async function getLobbyOrders(lobbyId: string): Promise<OrderRow[]> {
+  const sb = getSupabase();
+  const { data, error } = await sb
+    .from("orders")
+    .select("player_id, dish_id, quantita_mangiata, players!inner(lobby_id)")
+    .eq("players.lobby_id", lobbyId);
+  if (error) throw error;
+
+  return data.map((o) => ({
+    player_id: o.player_id,
+    dish_id: o.dish_id,
+    quantita_mangiata: o.quantita_mangiata,
+  }));
+}
+
 export async function getMyOrders(playerId: string): Promise<OrderWithDish[]> {
   const sb = getSupabase();
   const { data, error } = await sb
