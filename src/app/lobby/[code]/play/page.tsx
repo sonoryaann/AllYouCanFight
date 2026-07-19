@@ -35,6 +35,7 @@ export default function PlayPage() {
   const [myOrders, setMyOrders] = useState<OrderWithDish[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error" | "redirecting">("loading");
+  const [lobbyStato, setLobbyStato] = useState<string>("creata");
   const [error, setError] = useState<string | null>(null);
   const [ending, setEnding] = useState(false);
   const [confirmEnd, setConfirmEnd] = useState(false);
@@ -58,6 +59,7 @@ export default function PlayPage() {
       setPlayers(p);
       setMyOrders(orders);
       setLeaderboard(board);
+      if (lobby) setLobbyStato(lobby.stato);
       if (lobby?.stato === "completata") {
         router.replace(`/lobby/${code}/results`);
       }
@@ -96,6 +98,15 @@ export default function PlayPage() {
           }
           return;
         }
+        // The host manages an unstarted game from the setup screen (where the
+        // "Avvia partita" button lives) — send them there.
+        if (lobby.stato === "creata" && me.ruolo === "host") {
+          if (!cancelled) {
+            setStatus("redirecting");
+            router.replace(`/lobby/${code}/setup`);
+          }
+          return;
+        }
         if (cancelled) return;
 
         lobbyIdRef.current = lobby.id;
@@ -103,6 +114,7 @@ export default function PlayPage() {
         setLobbyId(lobby.id);
         setPlayerId(me.id);
         setIsHost(me.ruolo === "host");
+        setLobbyStato(lobby.stato);
 
         const [d, p, orders, board] = await Promise.all([
           getDishes(lobby.id),
@@ -165,6 +177,49 @@ export default function PlayPage() {
         >
           Torna alla home
         </button>
+      </div>
+    );
+  }
+
+  if (lobbyStato === "creata") {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center bg-rice px-4 py-10 text-center">
+        <div className="flex w-full max-w-md flex-col items-center gap-6">
+          <div className="text-6xl">🍣</div>
+          <div className="flex flex-col gap-2">
+            <h1 className="font-display text-2xl font-bold text-nori">In attesa dell&apos;avvio</h1>
+            <p className="text-sm text-nori-soft">
+              Sei dentro! La sfida inizierà quando l&apos;host avvia la partita. Potrai ordinare e
+              segnare i piatti solo da quel momento.
+            </p>
+          </div>
+
+          <div className="w-full rounded-2xl bg-card p-5 shadow-xl shadow-nori/5 ring-1 ring-soy-soft/40">
+            <h2 className="font-display mb-3 text-lg font-semibold text-nori">
+              Giocatori ({players.length})
+            </h2>
+            {players.length === 0 ? (
+              <p className="text-sm text-nori-soft">Nessun giocatore ancora…</p>
+            ) : (
+              <ul className="flex flex-wrap justify-center gap-2">
+                {players.map((p) => (
+                  <li
+                    key={p.id}
+                    className="rounded-full bg-wasabi-soft px-3 py-1.5 text-sm font-medium text-wasabi-dark"
+                  >
+                    {p.ruolo === "host" ? "👑 " : ""}
+                    {p.username}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 text-sm text-nori-soft">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-salmon" />
+            In attesa dell&apos;host…
+          </div>
+        </div>
       </div>
     );
   }
