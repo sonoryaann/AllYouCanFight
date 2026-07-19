@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Baloo_2, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const baloo = Baloo_2({
@@ -41,7 +42,10 @@ export default function RootLayout({
       lang="it"
       className={`${baloo.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-rice text-nori">{children}</body>
+      <body className="min-h-full flex flex-col bg-rice text-nori">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

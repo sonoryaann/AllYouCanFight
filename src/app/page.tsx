@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { CreateForm } from "@/components/CreateForm";
 import { JoinForm } from "@/components/JoinForm";
 import { IntroAnimation } from "@/components/IntroAnimation";
@@ -57,6 +58,12 @@ export default function Home() {
           </h2>
           <JoinForm />
         </section>
+
+        <footer className="pt-2 text-center">
+          <Link href="/privacy" className="text-xs text-nori-soft underline hover:text-nori">
+            Privacy Policy
+          </Link>
+        </footer>
       </div>
     </div>
   );
