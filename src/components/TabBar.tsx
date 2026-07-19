@@ -1,11 +1,12 @@
 "use client";
 
-export type TabId = "classifica" | "menu" | "ordini";
+export type TabId = "classifica" | "menu" | "ordini" | "missioni";
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: "classifica", label: "Classifica", icon: "🏆" },
   { id: "menu", label: "Menu", icon: "🍱" },
   { id: "ordini", label: "I Miei Ordini", icon: "🍣" },
+  { id: "missioni", label: "Missioni", icon: "🎯" },
 ];
 
 export function TabBar({
@@ -29,14 +30,16 @@ export function TabBar({
               type="button"
               onClick={() => onChange(tab.id)}
               aria-current={isActive ? "page" : undefined}
-              className={`tap-active flex flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium transition-colors ${
+              className={`tap-active flex min-w-0 flex-1 flex-col items-center gap-0.5 py-2.5 text-xs font-medium transition-colors ${
                 isActive ? "text-salmon" : "text-nori-soft"
               }`}
             >
               <span className={`text-2xl transition-transform ${isActive ? "scale-110" : ""}`}>
                 {tab.icon}
               </span>
-              <span className={isActive ? "font-display font-semibold" : ""}>{tab.label}</span>
+              <span className={`w-full truncate px-0.5 text-center ${isActive ? "font-display font-semibold" : ""}`}>
+                {tab.label}
+              </span>
             </button>
           );
         })}

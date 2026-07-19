@@ -13,12 +13,25 @@ import { TabBar, type TabId } from "@/components/TabBar";
 import { Leaderboard } from "@/components/Leaderboard";
 import { MenuTab } from "@/components/MenuTab";
 import { MyOrdersTab } from "@/components/MyOrdersTab";
+import { MissionsTab } from "@/components/MissionsTab";
 import type { DishRow, LeaderboardEntry } from "@/lib/logic/scoring";
+import type { EatenDish } from "@/lib/logic/missions";
 
 interface Player {
   id: string;
   username: string;
   ruolo: string;
+}
+
+function myOrdersToEaten(orders: OrderWithDish[]): EatenDish[] {
+  return orders.map((o) => ({
+    nome: o.nome,
+    categoria: o.categoria,
+    punti: o.punti,
+    quantita_ordinata: o.quantita_ordinata,
+    quantita_mangiata: o.quantita_mangiata,
+    stato: o.stato === "consegnato" ? "consegnato" : "in_attesa",
+  }));
 }
 
 export default function PlayPage() {
@@ -266,6 +279,13 @@ export default function PlayPage() {
           <>
             <h1 className="font-display text-2xl font-bold text-nori">🍣 I Miei Ordini</h1>
             <MyOrdersTab orders={myOrders} onChanged={refetchAll} />
+          </>
+        )}
+
+        {tab === "missioni" && (
+          <>
+            <h1 className="font-display text-2xl font-bold text-nori">🎯 Missioni</h1>
+            <MissionsTab eaten={myOrdersToEaten(myOrders)} />
           </>
         )}
 
