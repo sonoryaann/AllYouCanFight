@@ -1,5 +1,6 @@
 import { getSupabase } from "@/lib/supabase/client";
 import type { DishRow } from "@/lib/logic/scoring";
+import { orderDishes } from "@/lib/logic/dishOrder";
 
 export async function getDishes(lobbyId: string): Promise<DishRow[]> {
   const sb = getSupabase();
@@ -8,7 +9,9 @@ export async function getDishes(lobbyId: string): Promise<DishRow[]> {
     .select("id, nome, categoria, punti")
     .eq("lobby_id", lobbyId);
   if (error) throw error;
-  return data;
+  // Deterministic, stable order so editing a dish's points never reorders the
+  // list (PostgREST returns rows in an undefined order after an UPDATE).
+  return orderDishes(data);
 }
 
 export async function updateDishPoints(dishId: string, punti: number): Promise<void> {
