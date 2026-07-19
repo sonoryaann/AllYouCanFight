@@ -64,7 +64,7 @@ export function MissionsTab({ eaten }: { eaten: EatenDish[] }) {
                     </div>
                   </div>
                   <span className="shrink-0 rounded-full bg-wasabi-soft px-2.5 py-1 text-xs font-semibold text-wasabi-dark">
-                    Lv {m.level}/5
+                    Lv {m.level}/{m.def.tiers.length}
                   </span>
                 </div>
                 <div className="h-2.5 w-full overflow-hidden rounded-full bg-rice-dim">
