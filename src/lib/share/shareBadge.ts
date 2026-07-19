@@ -1,6 +1,6 @@
 /**
  * Badge download + social share — the growth loop. Every shared image
- * carries the site URL so it advertises Sushi Battle on its own.
+ * carries the site URL so it advertises All You Can Fight on its own.
  *
  * Browser-only: relies on <canvas>, Image, navigator.share/canShare and
  * navigator.clipboard. Only call these from client-side event handlers,
@@ -65,7 +65,7 @@ async function composeBadgeImage({ badgeUrl, username, titolo, grado }: BadgeSha
   ctx.textAlign = "center";
   ctx.fillStyle = "#2b2320";
   ctx.font = "700 56px 'Segoe UI', system-ui, sans-serif";
-  ctx.fillText("🍣 Sushi Battle", CANVAS_WIDTH / 2, 140);
+  ctx.fillText("🍣 All You Can Fight", CANVAS_WIDTH / 2, 140);
 
   // Award title, below the badge.
   ctx.fillStyle = "#c0392b";
@@ -162,7 +162,7 @@ export async function shareBadge({ badgeUrl, username, titolo, grado }: BadgeSha
   const blob = await composeBadgeImage({ badgeUrl, username, titolo, grado });
   const file = new File([blob], "sushi-badge.png", { type: "image/png" });
   const url = window.location.origin;
-  const promoText = `Ho vinto "${titolo}" a Sushi Battle! 🍣 Sfidami: ${url}`;
+  const promoText = `Ho vinto "${titolo}" a All You Can Fight! 🍣 Sfidami: ${url}`;
 
   const canShareFiles =
     typeof navigator !== "undefined" &&
