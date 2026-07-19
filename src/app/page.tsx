@@ -7,27 +7,23 @@ import { IntroAnimation } from "@/components/IntroAnimation";
 import { Logo } from "@/components/Logo";
 import { shouldPlayIntro } from "@/lib/logic/intro";
 
-const INTRO_SEEN_KEY = "aycf_intro_seen";
-
 export default function Home() {
   // Start false so SSR and the first client render always match (no
   // hydration flash of the overlay). Decided for real after mount.
   const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
-    const seen = window.localStorage.getItem(INTRO_SEEN_KEY);
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
     // Deliberate: this effect exists solely to sync `showIntro` with
-    // browser-only state (localStorage, matchMedia) after mount, which is
-    // unavailable during SSR/first render.
+    // browser-only state (matchMedia) after mount, which is unavailable
+    // during SSR/first render.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setShowIntro(shouldPlayIntro(seen, prefersReducedMotion));
+    setShowIntro(shouldPlayIntro(prefersReducedMotion));
   }, []);
 
   const finishIntro = () => {
-    window.localStorage.setItem(INTRO_SEEN_KEY, "1");
     setShowIntro(false);
   };
 

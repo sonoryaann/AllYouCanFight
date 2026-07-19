@@ -1,3 +1,3 @@
-export function shouldPlayIntro(seen: string | null, prefersReducedMotion: boolean): boolean {
-  return seen !== "1" && !prefersReducedMotion;
+export function shouldPlayIntro(prefersReducedMotion: boolean): boolean {
+  return !prefersReducedMotion;
 }
