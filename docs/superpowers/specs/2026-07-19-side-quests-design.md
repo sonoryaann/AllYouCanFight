@@ -84,39 +84,51 @@ interface PlayerStats {
 
 ## 4. Missioni (27, tutte derivabili)
 
-Ogni missione mappa su **un** campo di `PlayerStats` e ha 5 tier. Livello = numero di soglie raggiunte (`value >= soglia`); sotto la prima soglia → livello 0; massimo livello 5. Le soglie sono per-partita ma la scala resta aperta per il futuro cumulativo.
+Ogni missione mappa su **un** campo di `PlayerStats` e ha **10 tier (livelli)**. Livello = numero di soglie raggiunte (`value >= soglia`); sotto la prima soglia → livello 0; massimo livello 10. Le ladder sono **geometriche**: il livello 1 è raggiungibile in una singola buona cena, ma i livelli alti salgono ripidamente, così maxare una missione richiede molte cene (aggancio di retention verso gli account). Le soglie sono per-partita oggi, cumulabili in futuro con gli account.
 
-| id | emoji | titolo | stat | tiers |
+**Curve condivise** (10 soglie ciascuna):
+- **F** frequenti = `3,8,16,28,45,70,105,150,210,300`
+- **M** medie = `2,6,12,22,36,55,80,115,160,220`
+- **R** rare = `2,5,10,18,30,46,68,96,132,180`
+- **C** combo = `4,11,22,40,66,100,145,205,285,400`
+- **P** punti = `10,30,65,120,200,320,480,700,1000,1400`
+- **B** pezzi = `8,22,45,80,130,200,290,410,570,800`
+- **D** piatti distinti = `3,6,9,12,16,20,25,30,36,42`
+- **V** categorie = `1,2,3,4,5,6,7,8,9,10` (il L10 diventa raggiungibile con l'ampliamento futuro del menù)
+- **O** ordini completati = `3,8,15,25,40,60,85,115,150,200`
+- **FM** fuori menu = `1,3,6,10,16,24,34,46,60,80`
+
+| id | emoji | titolo | stat | curva |
 |---|---|---|---|---|
-| nigiri | 🍣 | Divoratore di Nigiri | `nigiri` | 1,3,6,10,15 |
-| uramaki | 🌊 | Maestro Uramaki | `uramaki` | 1,3,6,10,15 |
-| hosomaki | 🎋 | Minimalista Hosomaki | `hosomaki` | 1,2,4,6,9 |
-| sashimi | 🐟 | Signore del Sashimi | `sashimi` | 1,2,4,6,9 |
-| gunkan | 🛶 | Capitano Gunkan | `gunkan` | 1,2,3,5,7 |
-| temaki | 🌯 | Artista del Temaki | `temaki` | 1,2,3,4,6 |
-| fritti | 🔥 | Amante del Fritto | `fritti` | 1,2,3,5,7 |
-| dolci | 🍡 | Goloso | `dolci` | 1,2,3,4,5 |
-| maki | 🌀 | Re dei Maki | `maki` | 2,5,9,14,20 |
-| crudo | 🍥 | Purista del Crudo | `crudo` | 2,5,9,14,20 |
-| salmone | 🧡 | Salmon Addict | `salmone` | 1,3,5,8,12 |
-| tonno | 🔴 | Cacciatore di Tonno | `tonno` | 1,3,5,8,12 |
-| gambero | 🦐 | Amico dei Gamberi | `gambero` | 1,2,3,5,7 |
-| branzino | 🐠 | Intenditore di Branzino | `branzino` | 1,2,3,4,5 |
-| anguilla | 🥢 | Coraggioso | `anguilla` | 1,2,3,4,5 |
-| veg | 🥗 | Salutista | `veg` | 1,2,3,5,7 |
-| tempura | 🍤 | Maestro Tempura | `tempura` | 1,2,3,4,6 |
-| spicy | 🌶️ | Palato di Fuoco | `spicy` | 1,2,3,4,5 |
-| punti | 🏆 | Collezionista di Punti | `puntiTotali` | 5,15,30,50,75 |
-| buongustaio | 💎 | Buongustaio | `gourmet` | 1,2,4,6,9 |
-| economico | 🪙 | Risparmiatore | `economici` | 2,5,9,14,20 |
-| esploratore | 🧭 | Esploratore | `distinctDishes` | 2,4,7,10,14 |
-| varieta | 🎨 | Palato Versatile | `distinctCategories` | 2,3,4,6,8 |
-| abbuffata | ♾️ | Senza Fondo | `pezziTotali` | 5,10,20,35,50 |
-| ordinatore | 📋 | Ordinatore Seriale | `distinctOrders` | 3,6,10,15,20 |
-| nessuno_spreco | ✅ | Nessuno Spreco | `completedOrders` | 2,4,7,11,15 |
-| fuori_menu | 🆕 | Fuori dagli Schemi | `fuoriMenu` | 1,2,3,4,5 |
+| nigiri | 🍣 | Divoratore di Nigiri | `nigiri` | F |
+| uramaki | 🌊 | Maestro Uramaki | `uramaki` | F |
+| hosomaki | 🎋 | Minimalista Hosomaki | `hosomaki` | M |
+| sashimi | 🐟 | Signore del Sashimi | `sashimi` | M |
+| gunkan | 🛶 | Capitano Gunkan | `gunkan` | R |
+| temaki | 🌯 | Artista del Temaki | `temaki` | R |
+| fritti | 🔥 | Amante del Fritto | `fritti` | M |
+| dolci | 🍡 | Goloso | `dolci` | R |
+| maki | 🌀 | Re dei Maki | `maki` | C |
+| crudo | 🍥 | Purista del Crudo | `crudo` | C |
+| salmone | 🧡 | Salmon Addict | `salmone` | F |
+| tonno | 🔴 | Cacciatore di Tonno | `tonno` | F |
+| gambero | 🦐 | Amico dei Gamberi | `gambero` | M |
+| branzino | 🐠 | Intenditore di Branzino | `branzino` | R |
+| anguilla | 🥢 | Coraggioso | `anguilla` | R |
+| veg | 🥗 | Salutista | `veg` | M |
+| tempura | 🍤 | Maestro Tempura | `tempura` | M |
+| spicy | 🌶️ | Palato di Fuoco | `spicy` | R |
+| punti | 🏆 | Collezionista di Punti | `puntiTotali` | P |
+| buongustaio | 💎 | Buongustaio | `gourmet` | M |
+| economico | 🪙 | Risparmiatore | `economici` | F |
+| esploratore | 🧭 | Esploratore | `distinctDishes` | D |
+| varieta | 🎨 | Palato Versatile | `distinctCategories` | V |
+| abbuffata | ♾️ | Senza Fondo | `pezziTotali` | B |
+| ordinatore | 📋 | Ordinatore Seriale | `distinctOrders` | D |
+| nessuno_spreco | ✅ | Nessuno Spreco | `completedOrders` | O |
+| fuori_menu | 🆕 | Fuori dagli Schemi | `fuoriMenu` | FM |
 
-Ogni missione ha anche una `descrizione` breve in italiano (definita nel codice; es. "Mangia nigiri", "Prova piatti diversi").
+Ogni missione ha anche una `descrizione` breve in italiano (definita nel codice; es. "Mangia nigiri", "Prova categorie diverse").
 
 ```ts
 interface MissionDef { id: string; emoji: string; titolo: string; descrizione: string; stat: keyof PlayerStats; tiers: number[] }
@@ -131,21 +143,22 @@ function computeMissions(stats: PlayerStats): MissionProgress[];
 
 ## 5. Grado Sushi complessivo (cumulativo)
 
-`gradeScore = somma dei livelli` delle 27 missioni (0 … 135). Mappato alla banda più alta con `min <= gradeScore`:
+`gradeScore` = somma dei livelli delle 27 missioni (max **270** = 27 × 10). Mappato alla banda più alta con `min <= gradeScore`:
 
 | punteggio ≥ | emoji | grado |
 |---|---|---|
 | 0 | 🍚 | Chicco di Riso |
-| 5 | 🥢 | Apprendista |
-| 12 | 🥉 | Sushi di Bronzo |
-| 22 | 🥈 | Sushi d'Argento |
-| 35 | 🥇 | Sushi d'Oro |
-| 50 | 💎 | Sushi di Platino |
-| 70 | 🔥 | Maestro del Sushi |
-| 95 | 🐉 | Gran Maestro del Sushi |
-| 120 | 👑 | Leggenda del Sushi |
+| 8 | 🥢 | Apprendista |
+| 20 | 🥉 | Sushi di Bronzo |
+| 40 | 🥈 | Sushi d'Argento |
+| 70 | 🥇 | Sushi d'Oro |
+| 105 | 💎 | Sushi di Platino |
+| 145 | 🔥 | Maestro del Sushi |
+| 195 | 🐉 | Gran Maestro del Sushi |
+| 245 | 🐲 | Leggenda del Sushi |
+| 270 | 👑 | **Sushi King** |
 
-**Calibrazione:** in una singola cena si toccano ~10–15 missioni a livelli bassi/medi → punteggio ~20–45, cioè Argento/Oro/Platino (soddisfacente). Maestro→Leggenda restano spazio per il futuro **cumulativo** con gli account. Le soglie sono un unico punto di configurazione, facilmente ritoccabili.
+**Calibrazione:** con le ladder ripide, una prima bella cena vale ~8–20 punti → Apprendista/Bronzo. I gradi alti (Maestro→Leggenda) richiedono gioco **cumulativo** su molte cene, e 👑 **Sushi King** (270) si ottiene solo maxando **tutte** le missioni — l'obiettivo da veterano che spinge a creare un account e tornare. Le soglie sono un unico punto di configurazione, facilmente ritoccabili.
 
 ```ts
 interface Grade { id: string; emoji: string; nome: string; min: number }

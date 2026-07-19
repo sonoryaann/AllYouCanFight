@@ -49,16 +49,16 @@ describe("missionLevel", () => {
 });
 
 describe("MISSIONS & computeMissions", () => {
-  it("has 27 missions each mapping to a stat with 5 tiers", () => {
+  it("has 27 missions each mapping to a stat with 10 tiers", () => {
     expect(MISSIONS).toHaveLength(27);
-    for (const m of MISSIONS) expect(m.tiers).toHaveLength(5);
+    for (const m of MISSIONS) expect(m.tiers).toHaveLength(10);
   });
   it("reports value, level and next threshold", () => {
     const stats = computePlayerStats([eat("Nigiri Salmone", "Nigiri", 1, 6)]);
     const nigiri = computeMissions(stats).find((m) => m.def.id === "nigiri")!;
     expect(nigiri.value).toBe(6);
-    expect(nigiri.level).toBe(3);   // tiers 1,3,6,10,15 -> 6 reaches 3
-    expect(nigiri.next).toBe(10);
+    expect(nigiri.level).toBe(1);   // tiers 3,8,16,... -> 6 reaches level 1
+    expect(nigiri.next).toBe(8);
   });
 });
 
@@ -68,18 +68,18 @@ describe("grade", () => {
   });
   it("maps score to the highest band with min<=score (boundaries)", () => {
     expect(gradeForScore(0).nome).toBe("Chicco di Riso");
-    expect(gradeForScore(5).nome).toBe("Apprendista");
-    expect(gradeForScore(35).nome).toBe("Sushi d'Oro");
-    expect(gradeForScore(120).nome).toBe("Leggenda del Sushi");
-    expect(GRADES).toHaveLength(9);
+    expect(gradeForScore(8).nome).toBe("Apprendista");
+    expect(gradeForScore(70).nome).toBe("Sushi d'Oro");
+    expect(gradeForScore(270).nome).toBe("Sushi King");
+    expect(GRADES).toHaveLength(10);
   });
   it("gradeProgress gives 0..1 and null next at the top", () => {
-    const p = gradeProgress(5); // Apprendista(5) -> Bronzo(12)
+    const p = gradeProgress(8); // Apprendista(8) -> Sushi di Bronzo(20)
     expect(p.current.nome).toBe("Apprendista");
     expect(p.next?.nome).toBe("Sushi di Bronzo");
     expect(p.ratio).toBeCloseTo(0);
-    expect(gradeProgress(200).next).toBeNull();
-    expect(gradeProgress(200).ratio).toBe(1);
+    expect(gradeProgress(300).next).toBeNull();  // 300 >= Sushi King (270)
+    expect(gradeProgress(300).ratio).toBe(1);
   });
   it("computeGrade ties it together", () => {
     const { score, grade } = computeGrade([eat("Nigiri Salmone", "Nigiri", 1, 6)]);

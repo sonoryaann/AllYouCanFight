@@ -70,34 +70,51 @@ export interface MissionDef {
   tiers: number[];
 }
 
+// Each mission has 10 tiers (levels). The ladders are geometric: level 1 is
+// reachable in a single good dinner, but the upper levels escalate steeply so
+// that maxing a mission takes many dinners of cumulative play (the retention
+// hook toward accounts). Shared curves by how often a metric grows:
+//   F frequent · M medium · R rare · C combo · P points · B pieces · D distinct
+//   V categories (grows with future menu expansion) · O completed · FM off-menu
+const F = [3, 8, 16, 28, 45, 70, 105, 150, 210, 300];
+const M = [2, 6, 12, 22, 36, 55, 80, 115, 160, 220];
+const R = [2, 5, 10, 18, 30, 46, 68, 96, 132, 180];
+const C = [4, 11, 22, 40, 66, 100, 145, 205, 285, 400];
+const P = [10, 30, 65, 120, 200, 320, 480, 700, 1000, 1400];
+const B = [8, 22, 45, 80, 130, 200, 290, 410, 570, 800];
+const D = [3, 6, 9, 12, 16, 20, 25, 30, 36, 42];
+const V = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const O = [3, 8, 15, 25, 40, 60, 85, 115, 150, 200];
+const FM = [1, 3, 6, 10, 16, 24, 34, 46, 60, 80];
+
 export const MISSIONS: MissionDef[] = [
-  { id: "nigiri", emoji: "🍣", titolo: "Divoratore di Nigiri", descrizione: "Mangia nigiri", stat: "nigiri", tiers: [1, 3, 6, 10, 15] },
-  { id: "uramaki", emoji: "🌊", titolo: "Maestro Uramaki", descrizione: "Mangia uramaki", stat: "uramaki", tiers: [1, 3, 6, 10, 15] },
-  { id: "hosomaki", emoji: "🎋", titolo: "Minimalista Hosomaki", descrizione: "Mangia hosomaki", stat: "hosomaki", tiers: [1, 2, 4, 6, 9] },
-  { id: "sashimi", emoji: "🐟", titolo: "Signore del Sashimi", descrizione: "Mangia sashimi", stat: "sashimi", tiers: [1, 2, 4, 6, 9] },
-  { id: "gunkan", emoji: "🛶", titolo: "Capitano Gunkan", descrizione: "Mangia gunkan", stat: "gunkan", tiers: [1, 2, 3, 5, 7] },
-  { id: "temaki", emoji: "🌯", titolo: "Artista del Temaki", descrizione: "Mangia temaki", stat: "temaki", tiers: [1, 2, 3, 4, 6] },
-  { id: "fritti", emoji: "🔥", titolo: "Amante del Fritto", descrizione: "Mangia piatti fritti", stat: "fritti", tiers: [1, 2, 3, 5, 7] },
-  { id: "dolci", emoji: "🍡", titolo: "Goloso", descrizione: "Mangia dolci", stat: "dolci", tiers: [1, 2, 3, 4, 5] },
-  { id: "maki", emoji: "🌀", titolo: "Re dei Maki", descrizione: "Mangia uramaki e hosomaki", stat: "maki", tiers: [2, 5, 9, 14, 20] },
-  { id: "crudo", emoji: "🍥", titolo: "Purista del Crudo", descrizione: "Mangia nigiri e sashimi", stat: "crudo", tiers: [2, 5, 9, 14, 20] },
-  { id: "salmone", emoji: "🧡", titolo: "Salmon Addict", descrizione: "Mangia piatti al salmone", stat: "salmone", tiers: [1, 3, 5, 8, 12] },
-  { id: "tonno", emoji: "🔴", titolo: "Cacciatore di Tonno", descrizione: "Mangia piatti al tonno", stat: "tonno", tiers: [1, 3, 5, 8, 12] },
-  { id: "gambero", emoji: "🦐", titolo: "Amico dei Gamberi", descrizione: "Mangia piatti al gambero", stat: "gambero", tiers: [1, 2, 3, 5, 7] },
-  { id: "branzino", emoji: "🐠", titolo: "Intenditore di Branzino", descrizione: "Mangia piatti al branzino", stat: "branzino", tiers: [1, 2, 3, 4, 5] },
-  { id: "anguilla", emoji: "🥢", titolo: "Coraggioso", descrizione: "Mangia anguilla", stat: "anguilla", tiers: [1, 2, 3, 4, 5] },
-  { id: "veg", emoji: "🥗", titolo: "Salutista", descrizione: "Mangia piatti vegetali", stat: "veg", tiers: [1, 2, 3, 5, 7] },
-  { id: "tempura", emoji: "🍤", titolo: "Maestro Tempura", descrizione: "Mangia tempura", stat: "tempura", tiers: [1, 2, 3, 4, 6] },
-  { id: "spicy", emoji: "🌶️", titolo: "Palato di Fuoco", descrizione: "Mangia piatti spicy", stat: "spicy", tiers: [1, 2, 3, 4, 5] },
-  { id: "punti", emoji: "🏆", titolo: "Collezionista di Punti", descrizione: "Accumula punti", stat: "puntiTotali", tiers: [5, 15, 30, 50, 75] },
-  { id: "buongustaio", emoji: "💎", titolo: "Buongustaio", descrizione: "Mangia piatti da 3+ punti", stat: "gourmet", tiers: [1, 2, 4, 6, 9] },
-  { id: "economico", emoji: "🪙", titolo: "Risparmiatore", descrizione: "Mangia piatti da 1 punto", stat: "economici", tiers: [2, 5, 9, 14, 20] },
-  { id: "esploratore", emoji: "🧭", titolo: "Esploratore", descrizione: "Prova piatti diversi", stat: "distinctDishes", tiers: [2, 4, 7, 10, 14] },
-  { id: "varieta", emoji: "🎨", titolo: "Palato Versatile", descrizione: "Prova categorie diverse", stat: "distinctCategories", tiers: [2, 3, 4, 6, 8] },
-  { id: "abbuffata", emoji: "♾️", titolo: "Senza Fondo", descrizione: "Mangia più pezzi possibile", stat: "pezziTotali", tiers: [5, 10, 20, 35, 50] },
-  { id: "ordinatore", emoji: "📋", titolo: "Ordinatore Seriale", descrizione: "Ordina piatti diversi", stat: "distinctOrders", tiers: [3, 6, 10, 15, 20] },
-  { id: "nessuno_spreco", emoji: "✅", titolo: "Nessuno Spreco", descrizione: "Completa i tuoi ordini", stat: "completedOrders", tiers: [2, 4, 7, 11, 15] },
-  { id: "fuori_menu", emoji: "🆕", titolo: "Fuori dagli Schemi", descrizione: "Mangia piatti fuori menu", stat: "fuoriMenu", tiers: [1, 2, 3, 4, 5] },
+  { id: "nigiri", emoji: "🍣", titolo: "Divoratore di Nigiri", descrizione: "Mangia nigiri", stat: "nigiri", tiers: F },
+  { id: "uramaki", emoji: "🌊", titolo: "Maestro Uramaki", descrizione: "Mangia uramaki", stat: "uramaki", tiers: F },
+  { id: "hosomaki", emoji: "🎋", titolo: "Minimalista Hosomaki", descrizione: "Mangia hosomaki", stat: "hosomaki", tiers: M },
+  { id: "sashimi", emoji: "🐟", titolo: "Signore del Sashimi", descrizione: "Mangia sashimi", stat: "sashimi", tiers: M },
+  { id: "gunkan", emoji: "🛶", titolo: "Capitano Gunkan", descrizione: "Mangia gunkan", stat: "gunkan", tiers: R },
+  { id: "temaki", emoji: "🌯", titolo: "Artista del Temaki", descrizione: "Mangia temaki", stat: "temaki", tiers: R },
+  { id: "fritti", emoji: "🔥", titolo: "Amante del Fritto", descrizione: "Mangia piatti fritti", stat: "fritti", tiers: M },
+  { id: "dolci", emoji: "🍡", titolo: "Goloso", descrizione: "Mangia dolci", stat: "dolci", tiers: R },
+  { id: "maki", emoji: "🌀", titolo: "Re dei Maki", descrizione: "Mangia uramaki e hosomaki", stat: "maki", tiers: C },
+  { id: "crudo", emoji: "🍥", titolo: "Purista del Crudo", descrizione: "Mangia nigiri e sashimi", stat: "crudo", tiers: C },
+  { id: "salmone", emoji: "🧡", titolo: "Salmon Addict", descrizione: "Mangia piatti al salmone", stat: "salmone", tiers: F },
+  { id: "tonno", emoji: "🔴", titolo: "Cacciatore di Tonno", descrizione: "Mangia piatti al tonno", stat: "tonno", tiers: F },
+  { id: "gambero", emoji: "🦐", titolo: "Amico dei Gamberi", descrizione: "Mangia piatti al gambero", stat: "gambero", tiers: M },
+  { id: "branzino", emoji: "🐠", titolo: "Intenditore di Branzino", descrizione: "Mangia piatti al branzino", stat: "branzino", tiers: R },
+  { id: "anguilla", emoji: "🥢", titolo: "Coraggioso", descrizione: "Mangia anguilla", stat: "anguilla", tiers: R },
+  { id: "veg", emoji: "🥗", titolo: "Salutista", descrizione: "Mangia piatti vegetali", stat: "veg", tiers: M },
+  { id: "tempura", emoji: "🍤", titolo: "Maestro Tempura", descrizione: "Mangia tempura", stat: "tempura", tiers: M },
+  { id: "spicy", emoji: "🌶️", titolo: "Palato di Fuoco", descrizione: "Mangia piatti spicy", stat: "spicy", tiers: R },
+  { id: "punti", emoji: "🏆", titolo: "Collezionista di Punti", descrizione: "Accumula punti", stat: "puntiTotali", tiers: P },
+  { id: "buongustaio", emoji: "💎", titolo: "Buongustaio", descrizione: "Mangia piatti da 3+ punti", stat: "gourmet", tiers: M },
+  { id: "economico", emoji: "🪙", titolo: "Risparmiatore", descrizione: "Mangia piatti da 1 punto", stat: "economici", tiers: F },
+  { id: "esploratore", emoji: "🧭", titolo: "Esploratore", descrizione: "Prova piatti diversi", stat: "distinctDishes", tiers: D },
+  { id: "varieta", emoji: "🎨", titolo: "Palato Versatile", descrizione: "Prova categorie diverse", stat: "distinctCategories", tiers: V },
+  { id: "abbuffata", emoji: "♾️", titolo: "Senza Fondo", descrizione: "Mangia più pezzi possibile", stat: "pezziTotali", tiers: B },
+  { id: "ordinatore", emoji: "📋", titolo: "Ordinatore Seriale", descrizione: "Ordina piatti diversi", stat: "distinctOrders", tiers: D },
+  { id: "nessuno_spreco", emoji: "✅", titolo: "Nessuno Spreco", descrizione: "Completa i tuoi ordini", stat: "completedOrders", tiers: O },
+  { id: "fuori_menu", emoji: "🆕", titolo: "Fuori dagli Schemi", descrizione: "Mangia piatti fuori menu", stat: "fuoriMenu", tiers: FM },
 ];
 
 export function missionLevel(value: number, tiers: number[]): number {
@@ -132,16 +149,21 @@ export interface Grade {
   min: number;
 }
 
+// Grade = sum of all mission levels (max = 27 missions × 10 levels = 270).
+// Bands are calibrated so a first strong dinner reaches Apprendista/Bronzo,
+// while the top grades require sustained cumulative play. 👑 Sushi King sits at
+// the maximum: it is reached only by maxing out every mission.
 export const GRADES: Grade[] = [
   { id: "riso", emoji: "🍚", nome: "Chicco di Riso", min: 0 },
-  { id: "apprendista", emoji: "🥢", nome: "Apprendista", min: 5 },
-  { id: "bronzo", emoji: "🥉", nome: "Sushi di Bronzo", min: 12 },
-  { id: "argento", emoji: "🥈", nome: "Sushi d'Argento", min: 22 },
-  { id: "oro", emoji: "🥇", nome: "Sushi d'Oro", min: 35 },
-  { id: "platino", emoji: "💎", nome: "Sushi di Platino", min: 50 },
-  { id: "maestro", emoji: "🔥", nome: "Maestro del Sushi", min: 70 },
-  { id: "granmaestro", emoji: "🐉", nome: "Gran Maestro del Sushi", min: 95 },
-  { id: "leggenda", emoji: "👑", nome: "Leggenda del Sushi", min: 120 },
+  { id: "apprendista", emoji: "🥢", nome: "Apprendista", min: 8 },
+  { id: "bronzo", emoji: "🥉", nome: "Sushi di Bronzo", min: 20 },
+  { id: "argento", emoji: "🥈", nome: "Sushi d'Argento", min: 40 },
+  { id: "oro", emoji: "🥇", nome: "Sushi d'Oro", min: 70 },
+  { id: "platino", emoji: "💎", nome: "Sushi di Platino", min: 105 },
+  { id: "maestro", emoji: "🔥", nome: "Maestro del Sushi", min: 145 },
+  { id: "granmaestro", emoji: "🐉", nome: "Gran Maestro del Sushi", min: 195 },
+  { id: "leggenda", emoji: "🐲", nome: "Leggenda del Sushi", min: 245 },
+  { id: "sushi_king", emoji: "👑", nome: "Sushi King", min: 270 },
 ];
 
 export function gradeScore(missions: Pick<MissionProgress, "level">[]): number {
