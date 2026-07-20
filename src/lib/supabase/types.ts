@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      default_dishes: {
+        Row: {
+          categoria: string
+          id: string
+          nome: string
+          ordine: number
+          punti: number
+        }
+        Insert: {
+          categoria: string
+          id?: string
+          nome: string
+          ordine?: number
+          punti?: number
+        }
+        Update: {
+          categoria?: string
+          id?: string
+          nome?: string
+          ordine?: number
+          punti?: number
+        }
+        Relationships: []
+      }
       lobbies: {
         Row: {
           codice_accesso: string
@@ -193,7 +217,9 @@ export type Database = {
         }
       }
       current_player_id: { Args: { p_lobby: string }; Returns: string }
+      is_lobby_host: { Args: { p_lobby: string }; Returns: boolean }
       mark_eaten: { Args: { p_order: string }; Returns: undefined }
+      my_lobby_ids: { Args: never; Returns: string[] }
       seed_default_dishes: { Args: { p_lobby: string }; Returns: undefined }
     }
     Enums: {
