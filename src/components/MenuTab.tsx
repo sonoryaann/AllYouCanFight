@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { addOrder } from "@/lib/db/orders";
 import { AddCustomDishDialog } from "@/components/AddCustomDishDialog";
+import { CategoryAccordion, DishSearchInput } from "@/components/CategoryAccordion";
+import { filterDishes, groupByCategory } from "@/lib/logic/dishSearch";
 import type { DishRow } from "@/lib/logic/scoring";
 
 export function MenuTab({
@@ -19,12 +21,20 @@ export function MenuTab({
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [showAddDish, setShowAddDish] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
 
-  const grouped = new Map<string, DishRow[]>();
-  for (const d of dishes) {
-    const list = grouped.get(d.categoria) ?? [];
-    list.push(d);
-    grouped.set(d.categoria, list);
+  const isSearching = query.trim().length > 0;
+  const filtered = filterDishes(dishes, query);
+  const grouped = groupByCategory(filtered);
+
+  function toggleCategory(categoria: string) {
+    setOpenCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(categoria)) next.delete(categoria);
+      else next.add(categoria);
+      return next;
+    });
   }
 
   async function handleAdd(dishId: string) {
@@ -51,6 +61,8 @@ export function MenuTab({
         ➕ Aggiungi piatto fuori menu
       </button>
 
+      <DishSearchInput value={query} onChange={setQuery} />
+
       {error && (
         <p role="alert" className="rounded-xl bg-salmon-soft px-4 py-3 text-sm font-medium text-salmon-dark">
           {error}
@@ -62,11 +74,22 @@ export function MenuTab({
           <span className="text-5xl">🍱</span>
           <p className="text-nori-soft">Il menu è ancora vuoto.</p>
         </div>
+      ) : grouped.size === 0 ? (
+        <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16 text-center">
+          <span className="text-5xl">🔍</span>
+          <p className="text-nori-soft">Nessun piatto trovato per &ldquo;{query.trim()}&rdquo;.</p>
+        </div>
       ) : (
-        [...grouped.entries()].map(([categoria, list]) => (
-          <section key={categoria} className="flex flex-col gap-2">
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-soy">{categoria}</h3>
-            <div className="flex flex-col gap-2">
+        [...grouped.entries()].map(([categoria, list]) => {
+          const open = isSearching || openCategories.has(categoria);
+          return (
+            <CategoryAccordion
+              key={categoria}
+              categoria={categoria}
+              count={list.length}
+              open={open}
+              onToggle={() => toggleCategory(categoria)}
+            >
               {list.map((dish) => {
                 const isPending = pendingId === dish.id;
                 return (
@@ -94,9 +117,9 @@ export function MenuTab({
                   </div>
                 );
               })}
-            </div>
-          </section>
-        ))
+            </CategoryAccordion>
+          );
+        })
       )}
 
       {showAddDish && (
