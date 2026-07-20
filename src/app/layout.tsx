@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Baloo_2, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { AppMenu } from "@/components/AppMenu";
 import "./globals.css";
 
 const baloo = Baloo_2({
@@ -44,6 +45,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-rice text-nori">
         {children}
+        <AppMenu />
         <Analytics />
       </body>
     </html>
