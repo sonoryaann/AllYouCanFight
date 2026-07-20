@@ -47,7 +47,10 @@ export function useAuth(): UseAuthResult {
     const { data: subscription } = sb.auth.onAuthStateChange((_event, session) => {
       const u = session?.user ?? null;
       setUser(u);
-      loadProfile(u);
+      queueMicrotask(() => {
+        if (cancelled) return;
+        loadProfile(u);
+      });
       setLoading(false);
     });
 

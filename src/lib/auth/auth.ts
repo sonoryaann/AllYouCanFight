@@ -23,9 +23,25 @@ export async function loginWithGoogle(): Promise<void> {
 
 export async function completeOAuth(): Promise<void> {
   const sb = getSupabase();
-  const code = new URLSearchParams(window.location.search).get("code");
+  const params = new URLSearchParams(window.location.search);
+  const errorParam = params.get("error");
+  const errorDesc = params.get("error_description") ?? "";
+  if (errorParam) {
+    // If the anonymous->Google LINK failed because that Google identity
+    // already exists, restart as a normal sign-in (this redirects away).
+    if (/already|exists|linked/i.test(errorParam + " " + errorDesc)) {
+      await sb.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+      return; // browser redirects to Google
+    }
+    throw new Error(errorDesc || errorParam);
+  }
+  const code = params.get("code");
   if (code) {
-    await sb.auth.exchangeCodeForSession(window.location.href);
+    const { error } = await sb.auth.exchangeCodeForSession(window.location.href);
+    if (error) throw error;
   }
   await ensureProfile();
 }

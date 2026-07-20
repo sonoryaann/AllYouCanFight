@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { useAuth } from "@/lib/auth/useAuth";
 import { loginWithGoogle, logout } from "@/lib/auth/auth";
 
@@ -59,13 +58,12 @@ export function AppMenu() {
                 ) : profile ? (
                   <>
                     {profile.avatar_url ? (
-                      <Image
+                      // eslint-disable-next-line @next/next/no-img-element -- needs referrerPolicy for googleusercontent.com avatars
+                      <img
                         src={profile.avatar_url}
                         alt=""
-                        width={44}
-                        height={44}
+                        referrerPolicy="no-referrer"
                         className="h-11 w-11 rounded-full object-cover"
-                        unoptimized
                       />
                     ) : (
                       <div className="flex h-11 w-11 items-center justify-center rounded-full bg-salmon-soft font-display text-lg font-bold text-salmon-dark">
