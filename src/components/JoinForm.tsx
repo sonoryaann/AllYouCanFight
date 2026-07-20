@@ -1,15 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { joinLobby } from "@/lib/db/players";
+import { useAuth } from "@/lib/auth/useAuth";
 
 export function JoinForm() {
   const router = useRouter();
+  const { profile } = useAuth();
   const [code, setCode] = useState("");
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!username && profile?.display_name) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUsername(profile.display_name);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.display_name]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
