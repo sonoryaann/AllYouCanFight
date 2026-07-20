@@ -38,6 +38,7 @@ A realtime mobile web app for tracking sushi orders and competing with friends. 
 - Project name: `sushi-counter`
 - Project ref: `hqxwujapcvthpurbymhl`
 - **Required manual step**: this app signs players in anonymously, so you must **enable "Allow anonymous sign-ins"** in the Supabase dashboard under **Authentication → Sign In / Providers** for the project. Without this, sign-in will fail.
+- Optional Google login: see [`docs/SETUP-google-oauth.md`](docs/SETUP-google-oauth.md) for the full setup (Google Cloud OAuth client + Supabase provider config).
 
 ## Running
 
