@@ -9,6 +9,8 @@ import { getDishes } from "@/lib/db/dishes";
 import { useLobbyChannel } from "@/lib/realtime/useLobbyChannel";
 import { DishStepper } from "@/components/DishStepper";
 import { AddCustomDishForm } from "@/components/AddCustomDishForm";
+import { CategoryAccordion, DishSearchInput } from "@/components/CategoryAccordion";
+import { filterDishes, groupByCategory } from "@/lib/logic/dishSearch";
 import type { DishRow } from "@/lib/logic/scoring";
 
 interface Player {
@@ -29,6 +31,9 @@ export default function SetupPage() {
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [query, setQuery] = useState("");
+  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
+  const [pointsOpen, setPointsOpen] = useState(false);
   const lobbyIdRef = useRef<string | null>(null);
 
   const refresh = useCallback(async () => {
@@ -136,11 +141,17 @@ export default function SetupPage() {
     );
   }
 
-  const grouped = new Map<string, DishRow[]>();
-  for (const d of dishes) {
-    const list = grouped.get(d.categoria) ?? [];
-    list.push(d);
-    grouped.set(d.categoria, list);
+  const isSearching = query.trim().length > 0;
+  const filtered = filterDishes(dishes, query);
+  const grouped = groupByCategory(filtered);
+
+  function toggleCategory(categoria: string) {
+    setOpenCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(categoria)) next.delete(categoria);
+      else next.add(categoria);
+      return next;
+    });
   }
 
   return (
@@ -184,21 +195,55 @@ export default function SetupPage() {
         </section>
 
         <section className="rounded-2xl bg-card p-5 shadow-xl shadow-nori/5 ring-1 ring-soy-soft/40">
-          <h2 className="font-display mb-3 text-lg font-semibold text-nori">Menu &amp; punti</h2>
-          <div className="flex flex-col gap-4">
-            {[...grouped.entries()].map(([categoria, list]) => (
-              <div key={categoria} className="flex flex-col gap-2">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-soy">
-                  {categoria}
-                </h3>
-                <div className="flex flex-col gap-1.5">
-                  {list.map((dish) => (
-                    <DishStepper key={dish.id} dish={dish} />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <h2 className="font-display mb-3 text-lg font-semibold text-nori">Menu</h2>
+          <DishSearchInput value={query} onChange={setQuery} />
+
+          <button
+            type="button"
+            onClick={() => setPointsOpen((v) => !v)}
+            aria-expanded={pointsOpen}
+            className="tap-active mt-4 flex h-12 w-full items-center justify-between gap-2 rounded-xl bg-wasabi-soft px-4 text-left"
+          >
+            <span className="font-display text-base font-semibold text-wasabi-dark">
+              Personalizza punti
+            </span>
+            <span
+              aria-hidden="true"
+              className={`text-wasabi-dark transition-transform ${pointsOpen ? "rotate-180" : ""}`}
+            >
+              ▾
+            </span>
+          </button>
+
+          {pointsOpen && (
+            <div className="mt-3 flex flex-col gap-4">
+              <p className="text-sm text-nori-soft">
+                I punti di default vanno bene per la maggior parte delle partite: modificali solo se vuoi.
+              </p>
+              {grouped.size === 0 ? (
+                <p className="text-sm text-nori-soft">
+                  Nessun piatto trovato per &ldquo;{query.trim()}&rdquo;.
+                </p>
+              ) : (
+                [...grouped.entries()].map(([categoria, list]) => {
+                  const open = isSearching || openCategories.has(categoria);
+                  return (
+                    <CategoryAccordion
+                      key={categoria}
+                      categoria={categoria}
+                      count={list.length}
+                      open={open}
+                      onToggle={() => toggleCategory(categoria)}
+                    >
+                      {list.map((dish) => (
+                        <DishStepper key={dish.id} dish={dish} />
+                      ))}
+                    </CategoryAccordion>
+                  );
+                })
+              )}
+            </div>
+          )}
         </section>
 
         <section className="rounded-2xl bg-card p-5 shadow-xl shadow-nori/5 ring-1 ring-soy-soft/40">
