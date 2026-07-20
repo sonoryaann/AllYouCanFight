@@ -6,12 +6,17 @@
 // categories (future custom ones) sort after the known set, alphabetically.
 
 export const CATEGORY_ORDER: string[] = [
+  "Antipasti",
   "Nigiri",
-  "Uramaki",
-  "Hosomaki",
-  "Sashimi",
   "Gunkan",
+  "Hosomaki",
+  "Uramaki",
+  "Futomaki",
   "Temaki",
+  "Roll Speciali",
+  "Sashimi",
+  "Tartare & Tataki",
+  "Poke",
   "Fritti",
   "Dolci",
   "Fuori Menu",

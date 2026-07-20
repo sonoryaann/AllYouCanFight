@@ -47,7 +47,14 @@ describe("orderDishes", () => {
   });
 
   it("exposes the intended culinary category order", () => {
-    expect(CATEGORY_ORDER[0]).toBe("Nigiri");
+    expect(CATEGORY_ORDER[0]).toBe("Antipasti");
     expect(CATEGORY_ORDER).toContain("Fuori Menu");
+  });
+
+  it("includes the expanded categories in dining order", () => {
+    expect(CATEGORY_ORDER).toEqual([
+      "Antipasti", "Nigiri", "Gunkan", "Hosomaki", "Uramaki", "Futomaki", "Temaki",
+      "Roll Speciali", "Sashimi", "Tartare & Tataki", "Poke", "Fritti", "Dolci", "Fuori Menu",
+    ]);
   });
 });
