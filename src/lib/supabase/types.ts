@@ -175,6 +175,27 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          creato_il: string
+          display_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          creato_il?: string
+          display_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          creato_il?: string
+          display_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       leaderboard: {
@@ -217,6 +238,7 @@ export type Database = {
         }
       }
       current_player_id: { Args: { p_lobby: string }; Returns: string }
+      delete_my_account: { Args: never; Returns: undefined }
       is_lobby_host: { Args: { p_lobby: string }; Returns: boolean }
       mark_eaten: { Args: { p_order: string }; Returns: undefined }
       my_lobby_ids: { Args: never; Returns: string[] }
