@@ -16,7 +16,7 @@
 - **RLS invariata sui fix esistenti**: preservare gli helper `my_lobby_ids()` / `is_lobby_host()` (migrazioni 0005/0006) e il vincolo `ruolo = 'player'` su `players_insert` (0004). Le policy vanno ricreate esatte + aggiunta la regola Ranked.
 - **Idempotenza**: `finalize_ranked_game` non deve mai raddoppiare i punti.
 - **Copy in italiano**, coerente con l'app. Titolare privacy invariato.
-- **Nessun unit test committato nel repo**: verifica tramite SQL runtime (Supabase MCP), `npm run build` e `npm run lint`, come per i sotto-progetti precedenti.
+- **Unit test solo per logica pura** (in `tests/logic/`). Il lavoro di C è DB + data-access + wiring UI, senza logica pura nuova (i file `src/lib/db/*` non hanno unit test per convenzione del repo). Verifica tramite SQL runtime (Supabase MCP), `npm run build` e `npm run lint`, come per i sotto-progetti B e "Menu".
 - Migrazioni applicate via Supabase MCP `apply_migration` (progetto ref `hqxwujapcvthpurbymhl`).
 
 ---
