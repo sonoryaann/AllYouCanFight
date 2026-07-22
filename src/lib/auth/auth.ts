@@ -1,5 +1,5 @@
 import { ensureAnonSession, getSupabase } from "@/lib/supabase/client";
-import { upsertProfile } from "@/lib/db/profiles";
+import { getProfile, upsertProfile } from "@/lib/db/profiles";
 import { displayNameFromUser } from "@/lib/logic/displayName";
 
 export async function loginWithGoogle(): Promise<void> {
@@ -21,41 +21,18 @@ export async function loginWithGoogle(): Promise<void> {
   await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
 }
 
-export async function completeOAuth(): Promise<void> {
-  const sb = getSupabase();
-  const params = new URLSearchParams(window.location.search);
-  const errorParam = params.get("error");
-  const errorDesc = params.get("error_description") ?? "";
-  if (errorParam) {
-    // If the anonymous->Google LINK failed because that Google identity
-    // already exists, restart as a normal sign-in (this redirects away).
-    if (/already|exists|linked/i.test(errorParam + " " + errorDesc)) {
-      await sb.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
-      });
-      return; // browser redirects to Google
-    }
-    throw new Error(errorDesc || errorParam);
-  }
-  const code = params.get("code");
-  if (code) {
-    const { error } = await sb.auth.exchangeCodeForSession(window.location.href);
-    if (error) throw error;
-  }
-  await ensureProfile();
-}
-
 export async function ensureProfile(): Promise<void> {
   const sb = getSupabase();
   const { data } = await sb.auth.getUser();
-  if (data.user && !data.user.is_anonymous) {
-    await upsertProfile({
-      id: data.user.id,
-      display_name: displayNameFromUser(data.user.user_metadata),
-      avatar_url: data.user.user_metadata?.avatar_url ?? null,
-    });
-  }
+  const user = data.user;
+  if (!user || user.is_anonymous) return;
+  const existing = await getProfile(user.id);
+  if (existing) return; // don't clobber existing display_name/avatar
+  await upsertProfile({
+    id: user.id,
+    display_name: displayNameFromUser(user.user_metadata),
+    avatar_url: (user.user_metadata?.avatar_url as string | undefined) ?? null,
+  });
 }
 
 export async function logout(): Promise<void> {

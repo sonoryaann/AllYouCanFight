@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { getSupabase } from "@/lib/supabase/client";
 import { getProfile, type Profile } from "@/lib/db/profiles";
+import { ensureProfile } from "@/lib/auth/auth";
 
 export interface UseAuthResult {
   loading: boolean;
@@ -25,6 +26,8 @@ export function useAuth(): UseAuthResult {
     async function loadProfile(u: User | null) {
       if (u && u.is_anonymous === false) {
         try {
+          await ensureProfile();
+          if (cancelled) return;
           const p = await getProfile(u.id);
           if (!cancelled) setProfile(p);
         } catch (err) {

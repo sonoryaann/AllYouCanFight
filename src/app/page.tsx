@@ -7,6 +7,7 @@ import { JoinForm } from "@/components/JoinForm";
 import { IntroAnimation } from "@/components/IntroAnimation";
 import { Logo } from "@/components/Logo";
 import { shouldPlayIntro } from "@/lib/logic/intro";
+import { loginWithGoogle } from "@/lib/auth/auth";
 
 export default function Home() {
   // Start false so SSR and the first client render always match (no
@@ -22,6 +23,27 @@ export default function Home() {
     // during SSR/first render.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setShowIntro(shouldPlayIntro(prefersReducedMotion));
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const authRetry = params.get("auth");
+    const authError = params.get("auth_error");
+
+    if (authRetry === "retry") {
+      loginWithGoogle().catch((err) => {
+        console.error("Errore nel riavvio del login con Google:", err);
+      });
+    }
+    if (authError) {
+      console.error("Errore di autenticazione:", authError);
+    }
+    if (authRetry || authError) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("auth");
+      url.searchParams.delete("auth_error");
+      window.history.replaceState({}, "", url.toString());
+    }
   }, []);
 
   const finishIntro = () => {
