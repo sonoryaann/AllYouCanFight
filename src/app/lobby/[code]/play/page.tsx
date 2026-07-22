@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ensureAnonSession } from "@/lib/supabase/client";
-import { getLobbyByCode, endGame } from "@/lib/db/lobbies";
+import { getLobbyByCode, endGame, finalizeRankedGame } from "@/lib/db/lobbies";
 import { getMyPlayer, getPlayers } from "@/lib/db/players";
 import { getDishes } from "@/lib/db/dishes";
 import { getMyOrders, type OrderWithDish } from "@/lib/db/orders";
@@ -52,6 +52,7 @@ export default function PlayPage() {
   const [error, setError] = useState<string | null>(null);
   const [ending, setEnding] = useState(false);
   const [confirmEnd, setConfirmEnd] = useState(false);
+  const [isRanked, setIsRanked] = useState(false);
 
   const lobbyIdRef = useRef<string | null>(null);
   const playerIdRef = useRef<string | null>(null);
@@ -128,6 +129,7 @@ export default function PlayPage() {
         setPlayerId(me.id);
         setIsHost(me.ruolo === "host");
         setLobbyStato(lobby.stato);
+        setIsRanked(lobby.ranked);
 
         const [d, p, orders, board] = await Promise.all([
           getDishes(lobby.id),
@@ -162,7 +164,11 @@ export default function PlayPage() {
     if (!lobbyId) return;
     setEnding(true);
     try {
-      await endGame(lobbyId);
+      if (isRanked) {
+        await finalizeRankedGame(lobbyId);
+      } else {
+        await endGame(lobbyId);
+      }
       router.replace(`/lobby/${code}/results`);
     } catch (err) {
       console.error(err);
@@ -248,6 +254,11 @@ export default function PlayPage() {
                 <span className="text-xs text-nori-soft">
                   {players.length} {players.length === 1 ? "giocatore" : "giocatori"} in gara
                 </span>
+                {isRanked && (
+                  <span className="mt-0.5 w-fit rounded-full bg-salmon-soft px-2 py-0.5 text-[11px] font-semibold text-salmon-dark">
+                    🏆 Ranked
+                  </span>
+                )}
               </div>
               {isHost && (
                 <button
