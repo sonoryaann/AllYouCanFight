@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth/useAuth";
 import { loginWithGoogle, logout, deleteAccount } from "@/lib/auth/auth";
-import { updateDisplayName } from "@/lib/db/profiles";
+import { updateDisplayName, changeAvatar } from "@/lib/db/profiles";
+
+const MAX_AVATAR_BYTES = 3 * 1024 * 1024;
 
 function formatDate(iso: string): string {
   try {
@@ -51,6 +53,9 @@ export default function ProfiloPage() {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Deliberate: syncs local editable copy with the auth-derived profile
@@ -88,6 +93,37 @@ export default function ProfiloPage() {
       setNameError("Impossibile salvare il nome. Riprova.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  function handleAvatarButtonClick() {
+    fileInputRef.current?.click();
+  }
+
+  async function handleAvatarSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file later
+    if (!file || !user) return;
+
+    if (!file.type.startsWith("image/")) {
+      setAvatarError("Il file deve essere un'immagine.");
+      return;
+    }
+    if (file.size > MAX_AVATAR_BYTES) {
+      setAvatarError("Immagine troppo grande (max 3 MB).");
+      return;
+    }
+
+    setAvatarError(null);
+    setUploadingAvatar(true);
+    try {
+      const url = await changeAvatar(user.id, file);
+      setProfile((p) => (p ? { ...p, avatar_url: url } : p));
+    } catch (err) {
+      console.error(err);
+      setAvatarError("Impossibile caricare la foto. Riprova.");
+    } finally {
+      setUploadingAvatar(false);
     }
   }
 
@@ -151,25 +187,52 @@ export default function ProfiloPage() {
     <div className="flex flex-1 flex-col items-center bg-rice px-4 py-10">
       <div className="flex w-full max-w-md flex-col gap-6">
         <section className="flex flex-col items-center gap-3 rounded-2xl bg-card p-6 text-center shadow-xl shadow-nori/5 ring-1 ring-soy-soft/40">
-          {profile?.avatar_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={profile.avatar_url}
-              alt=""
-              referrerPolicy="no-referrer"
-              className="h-20 w-20 rounded-full object-cover shadow-md"
-            />
-          ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-salmon-soft font-display text-3xl font-bold text-salmon-dark">
-              {initial}
-            </div>
+          <div className="relative h-20 w-20">
+            {profile?.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={profile.avatar_url}
+                alt=""
+                referrerPolicy="no-referrer"
+                className="h-20 w-20 rounded-full object-cover shadow-md"
+              />
+            ) : (
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-salmon-soft font-display text-3xl font-bold text-salmon-dark">
+                {initial}
+              </div>
+            )}
+            {uploadingAvatar && (
+              <div className="absolute inset-0 flex items-center justify-center rounded-full bg-nori/50">
+                <span className="text-xs font-semibold text-white">…</span>
+              </div>
+            )}
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarSelected}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={handleAvatarButtonClick}
+            disabled={uploadingAvatar}
+            className="tap-active flex h-11 items-center justify-center rounded-xl px-4 text-sm font-medium text-nori-soft ring-1 ring-soy-soft/40 disabled:opacity-60"
+          >
+            {uploadingAvatar ? "Caricamento…" : "Cambia foto"}
+          </button>
+          {avatarError && (
+            <p role="alert" className="text-sm font-medium text-salmon-dark">
+              {avatarError}
+            </p>
           )}
           <h1 className="font-display text-xl font-semibold text-nori">
             {profile?.display_name ?? "Giocatore"}
           </h1>
           {profile?.creato_il && (
             <p className="text-sm text-nori-soft">
-              Membro dal {formatDate(profile.creato_il)}
+              Sushi Fighter dal {formatDate(profile.creato_il)}
             </p>
           )}
         </section>
