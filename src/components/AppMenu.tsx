@@ -94,6 +94,14 @@ export function AppMenu() {
             </div>
 
             <nav className="flex flex-col gap-2">
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                className="tap-active flex min-h-11 items-center justify-center rounded-xl bg-salmon px-4 font-display font-semibold text-white shadow-lg shadow-salmon/30"
+              >
+                🍣 Gioca
+              </Link>
+
               {!isLoggedIn && (
                 <button
                   type="button"
@@ -125,22 +133,13 @@ export function AppMenu() {
               </div>
 
               {isLoggedIn ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="tap-active flex min-h-11 items-center rounded-xl px-4 font-medium text-nori ring-1 ring-soy-soft/40"
-                  >
-                    Logout
-                  </button>
-                  <Link
-                    href="/profilo"
-                    onClick={() => setOpen(false)}
-                    className="tap-active flex min-h-11 items-center rounded-xl px-4 font-medium text-salmon-dark ring-1 ring-salmon-soft"
-                  >
-                    Elimina account
-                  </Link>
-                </>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="tap-active flex min-h-11 items-center rounded-xl px-4 font-medium text-nori ring-1 ring-soy-soft/40"
+                >
+                  Logout
+                </button>
               ) : (
                 <Link
                   href="/privacy"
