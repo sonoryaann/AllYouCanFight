@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth/useAuth";
 import { loginWithGoogle, logout, deleteAccount } from "@/lib/auth/auth";
 import { updateDisplayName, changeAvatar } from "@/lib/db/profiles";
+import { getMyGlobalScore, type GlobalScore } from "@/lib/db/gameResults";
 
 const MAX_AVATAR_BYTES = 3 * 1024 * 1024;
 
@@ -22,10 +23,6 @@ function formatDate(iso: string): string {
 }
 
 const PLACEHOLDER_SECTIONS = [
-  {
-    title: "Statistiche",
-    description: "I tuoi numeri: pezzi mangiati, partite giocate e record personali.",
-  },
   {
     title: "Storico partite",
     description: "L'elenco di tutte le partite a cui hai preso parte.",
@@ -55,6 +52,7 @@ export default function ProfiloPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [globalScore, setGlobalScore] = useState<GlobalScore | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -71,6 +69,19 @@ export default function ProfiloPage() {
       setNameSeeded(true);
     }
   }, [profile, nameSeeded]);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    getMyGlobalScore(user.id)
+      .then((s) => {
+        if (!cancelled) setGlobalScore(s);
+      })
+      .catch((err) => console.error("Errore nel caricamento del punteggio globale:", err));
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   async function handleSaveName(e: React.FormEvent) {
     e.preventDefault();
@@ -279,6 +290,35 @@ export default function ProfiloPage() {
               )}
             </div>
           </form>
+        </section>
+
+        <section className="flex flex-col gap-3 rounded-2xl bg-card p-6 shadow-xl shadow-nori/5 ring-1 ring-soy-soft/40">
+          <h2 className="font-display text-lg font-semibold text-nori">🏆 Punteggio globale</h2>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="flex flex-col items-center gap-1 rounded-xl bg-salmon-soft px-2 py-3">
+              <span className="font-display text-2xl font-bold text-salmon-dark">
+                {globalScore?.punti ?? 0}
+              </span>
+              <span className="text-xs font-medium text-nori-soft">punti</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 rounded-xl bg-wasabi-soft px-2 py-3">
+              <span className="font-display text-2xl font-bold text-wasabi-dark">
+                {globalScore?.pezzi ?? 0}
+              </span>
+              <span className="text-xs font-medium text-nori-soft">pezzi</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 rounded-xl bg-rice-dim px-2 py-3">
+              <span className="font-display text-2xl font-bold text-nori">
+                {globalScore?.partite ?? 0}
+              </span>
+              <span className="text-xs font-medium text-nori-soft">
+                {globalScore?.partite === 1 ? "partita" : "partite"}
+              </span>
+            </div>
+          </div>
+          <p className="text-xs text-nori-soft">
+            Solo le partite Ranked contano per il punteggio globale.
+          </p>
         </section>
 
         <section className="flex flex-col gap-3 rounded-2xl bg-card/60 p-6 shadow-md shadow-nori/5 ring-1 ring-soy-soft/30">
