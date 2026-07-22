@@ -7,8 +7,9 @@ import { useAuth } from "@/lib/auth/useAuth";
 
 export function CreateForm() {
   const router = useRouter();
-  const { profile } = useAuth();
+  const { profile, isLoggedIn } = useAuth();
   const [username, setUsername] = useState("");
+  const [ranked, setRanked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +31,7 @@ export function CreateForm() {
     setLoading(true);
     setError(null);
     try {
-      const { code } = await createLobby(trimmed);
+      const { code } = await createLobby(trimmed, ranked);
       router.push(`/lobby/${code}/setup`);
     } catch (err) {
       console.error(err);
@@ -61,6 +62,36 @@ export function CreateForm() {
           {error}
         </p>
       )}
+      <button
+        type="button"
+        onClick={() => isLoggedIn && setRanked((v) => !v)}
+        aria-pressed={ranked}
+        disabled={!isLoggedIn}
+        className={`flex items-center justify-between gap-3 rounded-2xl border-2 px-4 py-3 text-left transition-colors ${
+          ranked ? "border-salmon bg-salmon-soft" : "border-soy-soft bg-rice-dim"
+        } ${!isLoggedIn ? "opacity-60" : "tap-active"}`}
+      >
+        <span className="flex flex-col">
+          <span className="font-display font-semibold text-nori">🏆 Partita Ranked</span>
+          <span className="text-xs text-nori-soft">
+            {isLoggedIn
+              ? "I punti contano per la classifica globale. Menu ufficiale, punti non modificabili."
+              : "Accedi con Google per giocare Ranked."}
+          </span>
+        </span>
+        <span
+          aria-hidden="true"
+          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+            ranked ? "bg-salmon" : "bg-soy-soft"
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
+              ranked ? "left-[22px]" : "left-0.5"
+            }`}
+          />
+        </span>
+      </button>
       <button
         type="submit"
         disabled={loading}

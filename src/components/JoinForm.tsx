@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { joinLobby } from "@/lib/db/players";
 import { useAuth } from "@/lib/auth/useAuth";
+import { loginWithGoogle } from "@/lib/auth/auth";
 
 export function JoinForm() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export function JoinForm() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rankedBlocked, setRankedBlocked] = useState(false);
 
   useEffect(() => {
     if (!username && profile?.display_name) {
@@ -31,13 +33,17 @@ export function JoinForm() {
     }
     setLoading(true);
     setError(null);
+    setRankedBlocked(false);
     try {
       await joinLobby(trimmedCode, trimmedName);
       router.push(`/lobby/${trimmedCode}/play`);
     } catch (err) {
       console.error(err);
       const message = err instanceof Error ? err.message : "";
-      if (/not found/i.test(message)) {
+      if (/ranked_requires_login/.test(message)) {
+        setRankedBlocked(true);
+        setError("Questa è una partita Ranked: accedi con Google per partecipare.");
+      } else if (/not found/i.test(message)) {
         setError("Codice inesistente. Controlla e riprova.");
       } else {
         setError("Impossibile unirsi alla partita. Riprova tra poco.");
@@ -83,6 +89,15 @@ export function JoinForm() {
         <p role="alert" className="text-sm font-medium text-salmon-dark">
           {error}
         </p>
+      )}
+      {rankedBlocked && (
+        <button
+          type="button"
+          onClick={() => loginWithGoogle()}
+          className="tap-active flex h-12 items-center justify-center rounded-2xl bg-nori font-display font-semibold text-white"
+        >
+          Accedi con Google
+        </button>
       )}
       <button
         type="submit"
