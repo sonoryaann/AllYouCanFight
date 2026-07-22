@@ -206,6 +206,27 @@ export default function ProfiloPage() {
                 <span className="text-xs font-semibold text-white">…</span>
               </div>
             )}
+            <button
+              type="button"
+              onClick={handleAvatarButtonClick}
+              disabled={uploadingAvatar}
+              aria-label="Cambia foto profilo"
+              className="tap-active absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-salmon text-white shadow-md ring-2 ring-card disabled:opacity-60"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
+              </svg>
+            </button>
           </div>
           <input
             ref={fileInputRef}
@@ -214,14 +235,6 @@ export default function ProfiloPage() {
             onChange={handleAvatarSelected}
             className="hidden"
           />
-          <button
-            type="button"
-            onClick={handleAvatarButtonClick}
-            disabled={uploadingAvatar}
-            className="tap-active flex h-11 items-center justify-center rounded-xl px-4 text-sm font-medium text-nori-soft ring-1 ring-soy-soft/40 disabled:opacity-60"
-          >
-            {uploadingAvatar ? "Caricamento…" : "Cambia foto"}
-          </button>
           {avatarError && (
             <p role="alert" className="text-sm font-medium text-salmon-dark">
               {avatarError}

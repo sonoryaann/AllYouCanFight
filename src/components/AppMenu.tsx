@@ -93,11 +93,11 @@ export function AppMenu() {
               </button>
             </div>
 
-            <nav className="flex flex-col gap-2">
+            <nav className="flex flex-col gap-3.5">
               <Link
                 href="/"
                 onClick={() => setOpen(false)}
-                className="tap-active flex min-h-11 items-center justify-center rounded-xl bg-salmon px-4 font-display font-semibold text-white shadow-lg shadow-salmon/30"
+                className="tap-active flex min-h-12 items-center justify-center rounded-xl bg-salmon/90 px-4 font-display font-semibold text-white shadow-sm shadow-salmon/20"
               >
                 🍣 Gioca
               </Link>
@@ -109,7 +109,7 @@ export function AppMenu() {
                     setOpen(false);
                     loginWithGoogle();
                   }}
-                  className="tap-active flex min-h-11 items-center justify-center rounded-xl bg-nori px-4 font-display font-semibold text-white"
+                  className="tap-active flex min-h-12 items-center justify-center rounded-xl bg-nori px-4 font-display font-semibold text-white"
                 >
                   Accedi con Google
                 </button>
@@ -119,13 +119,13 @@ export function AppMenu() {
                 <Link
                   href="/profilo"
                   onClick={() => setOpen(false)}
-                  className="tap-active flex min-h-11 items-center rounded-xl px-4 font-medium text-nori ring-1 ring-soy-soft/40"
+                  className="tap-active flex min-h-12 items-center rounded-xl bg-card px-4 font-semibold text-nori shadow-sm shadow-nori/5 ring-1 ring-soy-soft/60"
                 >
                   Profilo
                 </Link>
               )}
 
-              <div className="flex min-h-11 items-center justify-between rounded-xl px-4 text-nori-soft ring-1 ring-soy-soft/40">
+              <div className="flex min-h-12 items-center justify-between rounded-xl bg-card px-4 font-semibold text-nori-soft shadow-sm shadow-nori/5 ring-1 ring-soy-soft/60">
                 <span>Classifiche</span>
                 <span className="rounded-full bg-wasabi-soft px-2 py-0.5 text-xs font-semibold text-wasabi-dark">
                   presto
@@ -136,7 +136,7 @@ export function AppMenu() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="tap-active flex min-h-11 items-center rounded-xl px-4 font-medium text-nori ring-1 ring-soy-soft/40"
+                  className="tap-active flex min-h-12 items-center rounded-xl bg-card px-4 font-semibold text-nori shadow-sm shadow-nori/5 ring-1 ring-soy-soft/60"
                 >
                   Logout
                 </button>
@@ -144,7 +144,7 @@ export function AppMenu() {
                 <Link
                   href="/privacy"
                   onClick={() => setOpen(false)}
-                  className="tap-active flex min-h-11 items-center rounded-xl px-4 font-medium text-nori-soft ring-1 ring-soy-soft/40"
+                  className="tap-active flex min-h-12 items-center rounded-xl bg-card px-4 font-semibold text-nori-soft shadow-sm shadow-nori/5 ring-1 ring-soy-soft/60"
                 >
                   Privacy
                 </Link>
