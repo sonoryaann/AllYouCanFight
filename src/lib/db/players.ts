@@ -2,11 +2,22 @@ import { ensureAnonSession, getSupabase } from "@/lib/supabase/client";
 import { getLobbyByCode } from "@/lib/db/lobbies";
 
 export async function joinLobby(code: string, username: string): Promise<{ playerId: string; lobbyId: string }> {
-  const deviceId = await ensureAnonSession();
   const sb = getSupabase();
 
   const lobby = await getLobbyByCode(code);
   if (!lobby) throw new Error("Lobby not found");
+
+  let deviceId: string;
+  if (lobby.ranked) {
+    // Ranked: richiede un account reale; non creare sessioni anonime.
+    const { data } = await sb.auth.getUser();
+    if (!data.user || data.user.is_anonymous) {
+      throw new Error("ranked_requires_login");
+    }
+    deviceId = data.user.id;
+  } else {
+    deviceId = await ensureAnonSession();
+  }
 
   const { data, error } = await sb
     .from("players")

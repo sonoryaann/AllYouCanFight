@@ -38,23 +38,64 @@ export type Database = {
         }
         Relationships: []
       }
+      game_results: {
+        Row: {
+          creato_il: string
+          id: string
+          lobby_id: string | null
+          pezzi: number
+          punti: number
+          user_id: string
+          username: string
+        }
+        Insert: {
+          creato_il?: string
+          id?: string
+          lobby_id?: string | null
+          pezzi: number
+          punti: number
+          user_id: string
+          username: string
+        }
+        Update: {
+          creato_il?: string
+          id?: string
+          lobby_id?: string | null
+          pezzi?: number
+          punti?: number
+          user_id?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_results_lobby_id_fkey"
+            columns: ["lobby_id"]
+            isOneToOne: false
+            referencedRelation: "lobbies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lobbies: {
         Row: {
           codice_accesso: string
           creato_il: string
           id: string
+          ranked: boolean
           stato: Database["public"]["Enums"]["lobby_stato"]
         }
         Insert: {
           codice_accesso: string
           creato_il?: string
           id?: string
+          ranked?: boolean
           stato?: Database["public"]["Enums"]["lobby_stato"]
         }
         Update: {
           codice_accesso?: string
           creato_il?: string
           id?: string
+          ranked?: boolean
           stato?: Database["public"]["Enums"]["lobby_stato"]
         }
         Relationships: []
@@ -223,11 +264,12 @@ export type Database = {
         Returns: undefined
       }
       create_lobby: {
-        Args: { p_codice: string; p_username: string }
+        Args: { p_codice: string; p_ranked?: boolean; p_username: string }
         Returns: {
           codice_accesso: string
           creato_il: string
           id: string
+          ranked: boolean
           stato: Database["public"]["Enums"]["lobby_stato"]
         }
         SetofOptions: {
@@ -239,7 +281,9 @@ export type Database = {
       }
       current_player_id: { Args: { p_lobby: string }; Returns: string }
       delete_my_account: { Args: never; Returns: undefined }
+      finalize_ranked_game: { Args: { p_lobby: string }; Returns: undefined }
       is_lobby_host: { Args: { p_lobby: string }; Returns: boolean }
+      is_ranked_lobby: { Args: { p_lobby: string }; Returns: boolean }
       mark_eaten: { Args: { p_order: string }; Returns: undefined }
       my_lobby_ids: { Args: never; Returns: string[] }
       seed_default_dishes: { Args: { p_lobby: string }; Returns: undefined }
